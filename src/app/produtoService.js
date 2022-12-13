@@ -34,6 +34,10 @@ export default class ProdutoService {
 
     obterProdutos = () => {
         let produtos = localStorage.getItem(PRODUTOS);
+        
+        if (!produtos)
+            return [];
+
         return JSON.parse(produtos);
     }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import ProdutoService from "../../app/produtoService";
 import { withRouter } from "react-router";
-
+import ProdutosTable from "../../components/produtoTable";
 class ConsultaProduto extends React.Component {
 
     state = {
@@ -32,43 +32,7 @@ class ConsultaProduto extends React.Component {
     render() {
         return (
             <div className="container mt-3">
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>SKU</th>
-                            <th>Preço</th>
-                            <th>Fornecedor</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.state.produtos.length > 0 ?
-
-                                this.state.produtos.map((produto, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>{produto.nome}</td>
-                                            <td>{produto.sku}</td>
-                                            <td>{produto.preco}</td>
-                                            <td>{produto.fornecedor}</td>
-                                            <td>
-                                                <div className="btn-group">
-                                                    <button type="button" className="btn btn-primary btn-sm" onClick={ () => this.preparaEditar(produto.sku) }>Editar</button>
-                                                    <button type="button" className="btn btn-danger btn-sm" onClick={ () => this.deletar(produto.sku) }>Remover</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            : 
-                            <tr>
-                                <td className="text-center" colSpan="5">Nenhum produto cadastrado</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+               <ProdutosTable produtos={this.state.produtos} editarAction={this.preparaEditar} deletarAction={this.deletar} />
             </div>
         )
     }

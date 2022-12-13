@@ -1,6 +1,6 @@
 import React from 'react';
 import ProdutoService from '../../app/produtoService';
-import { withRouter } from 'react-router';
+import { useParams, withRouter } from 'react-router';
 
 const estadoInicial = {
     nome: '',
@@ -9,15 +9,17 @@ const estadoInicial = {
     preco: 0,
     fornecedor: '',
     sucesso: false,
-    errors: []
+    errors: [],
+    atualizando: false,
 }
 class CadastroProduto extends React.Component {
 
-    state = estadoInicial;
+    
 
     constructor(){
         super()
         this.service = new ProdutoService();
+        this.state = estadoInicial;
     }
 
     onChange = (event) => {
@@ -29,6 +31,8 @@ class CadastroProduto extends React.Component {
     }
 
     onSubmit = (event) => {
+        event.preventDefault();
+        
         const produto = {
             nome: this.state.nome,
             sku: this.state.sku,
@@ -54,13 +58,12 @@ class CadastroProduto extends React.Component {
 
     componentDidMount(){
         const sku = this.props.match.params.sku;
-        console.log(sku)
         if (sku) {
             const resultado = this.service.obterProdutos().filter(produto => produto.sku === sku);
 
             if (resultado.length === 1) {
                 const produtoEncontrado = resultado[0];
-                this.setState({...produtoEncontrado})
+                this.setState({ ...produtoEncontrado, atualizando: true })
             }
         } 
     }
@@ -68,7 +71,7 @@ class CadastroProduto extends React.Component {
     render(){
         return (
             <div className='container mt-3'>
-                <h3>Cadastro de Produtos</h3>
+                <h3>{ this.state.atualizando ? 'Atualização' : 'Cadastro' } de Produtos</h3>
                 <hr />
                 { 
                     // Caso sucesso seja true carrega o alert
@@ -92,7 +95,7 @@ class CadastroProduto extends React.Component {
                         })
                 }
                 
-                <form className="form-horizontal">
+                <form className="form-horizontal" id="frmProduto" onSubmit={this.onSubmit}>
                     <div className='row'>
                         <div className='mb-3 col-md-6'>
                             <label>Nome: *</label>
@@ -100,7 +103,7 @@ class CadastroProduto extends React.Component {
                         </div>
                         <div className='mb-3 col-md-6'>
                             <label>SKU: *</label>
-                            <input type='text' name='sku' value={this.state.sku} onChange={this.onChange} className='form-control' />
+                            <input type='text' name='sku' disabled={this.state.atualizando} value={this.state.sku} onChange={this.onChange} className='form-control' />
                         </div>
                         <div className='mb-3 col-md-12'>
                             <label>Descrição: *</label>
@@ -116,7 +119,7 @@ class CadastroProduto extends React.Component {
                         </div>
                     </div>
                     <div className='d-flex justify-content-between'>
-                        <button type="button" onClick={this.onSubmit} className='btn btn-success'>Salvar</button>
+                        <button type="submit" className='btn btn-success'>{this.state.atualizando?'Atualizar':'Salvar'}</button>
                         <button type='button' onClick={this.limpaCampos} className='btn btn-primary'>Limpar</button>
                     </div>
                 </form>
